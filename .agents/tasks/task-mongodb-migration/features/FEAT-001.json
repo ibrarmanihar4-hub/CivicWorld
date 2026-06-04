@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Create Mongoose models and update database configuration, then rewrite all three services (authService, issuesService, commentsService) to use MongoDB via Mongoose instead of in-memory arrays.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Update server/src/config/database.js to use the connection URI: mongodb+srv://ibrarmanihar02_db_user:bymyb57CfRyzJrYp@cluster0.dbqpxjd.mongodb.net/?appName=Cluster0",
     "Create server/src/models/User.js with Mongoose schema matching current user fields: name (String, required), email (String, required, unique), password (String, required), city (String, required), profilePictureUrl (String, default placeholder), totalPosts (Number, default 0), totalUpvotes (Number, default 0), timestamps: true. Add a virtual 'id' getter that returns _id.toString() and configure toJSON/toObject to include virtuals and map _id to id.",
@@ -27,5 +27,5 @@
     "Run 'cd /projects/sandbox/CivicWorld/server && timeout 15 node index.js' and confirm the output contains 'Connected to MongoDB' and the server starts on port 5000"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Server successfully connects to MongoDB Atlas and starts on port 5000. Verification confirmed with 'Connected to MongoDB' log message. All models use toJSON/toObject transforms to map _id to id and remove __v. The deprecated useNewUrlParser and useUnifiedTopology options remain in database.js but are harmless in Mongoose 7.x (they are ignored)."
 }
