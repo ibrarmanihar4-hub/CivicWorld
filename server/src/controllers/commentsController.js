@@ -5,7 +5,7 @@ class CommentsController {
   // Get comments for an issue
   async getCommentsByIssue(req, res) {
     try {
-      const comments = commentsService.getCommentsByIssue(req.params.issueId);
+      const comments = await commentsService.getCommentsByIssue(req.params.issueId);
       res.json(comments);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -21,7 +21,7 @@ class CommentsController {
         return res.status(400).json({ error: 'Comment text is required' });
       }
 
-      const comment = commentsService.addComment(
+      const comment = await commentsService.addComment(
         req.params.issueId,
         { text },
         req.user.id
@@ -42,7 +42,7 @@ class CommentsController {
         return res.status(400).json({ error: 'Comment text is required' });
       }
 
-      const comment = commentsService.updateComment(
+      const comment = await commentsService.updateComment(
         req.params.id,
         text,
         req.user.id
@@ -57,7 +57,7 @@ class CommentsController {
   // Delete comment
   async deleteComment(req, res) {
     try {
-      const result = commentsService.deleteComment(req.params.id, req.user.id);
+      const result = await commentsService.deleteComment(req.params.id, req.user.id);
       res.json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });

@@ -1,22 +1,12 @@
 // server/src/services/issuesService.js
-
-// In-memory issues storage
-const issues = [];
+const Issue = require('../models/Issue');
 
 class IssuesService {
   // Create a new issue
-  createIssue(issueData, userId) {
-    const {
-      title,
-      description,
-      category,
-      city,
-      location,
-      imageUrl
-    } = issueData;
+  async createIssue(issueData, userId) {
+    const { title, description, category, city, location, imageUrl } = issueData;
 
-    const newIssue = {
-      id: Date.now().toString(),
+    const newIssue = await Issue.create({
       title,
       description,
       category,
@@ -24,114 +14,116 @@ class IssuesService {
       location,
       imageUrl: imageUrl || 'https://via.placeholder.com/500',
       reporterId: userId,
-      status: 'open',
-      upvoteCount: 0,
-      upvoters: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    });
 
-    issues.push(newIssue);
-    return newIssue;
+    return newIssue.toJSON();
   }
 
   // Get all issues with filtering and sorting
-  getAllIssues(filters = {}) {
-    let filteredIssues = [...issues];
+  async getAllIssues(filters = {}) {
+    const query = {};
 
-    // Filter by city
+    // Filter by city (case-insensitive)
     if (filters.city) {
-      filteredIssues = filteredIssues.filter(i => i.city.toLowerCase() === filters.city.toLowerCase());
+      query.city = new RegExp(`^${filters.city}$`, 'i');
     }
 
     // Filter by category
     if (filters.category) {
-      filteredIssues = filteredIssues.filter(i => i.category === filters.category);
+      query.category = filters.category;
     }
 
     // Filter by status
     if (filters.status) {
-      filteredIssues = filteredIssues.filter(i => i.status === filters.status);
+      query.status = filters.status;
     }
 
-    // Search by title or location
+    // Search by title, description, or location
     if (filters.search) {
-      const searchTerm = filters.search.toLowerCase();
-      filteredIssues = filteredIssues.filter(i =>
-        i.title.toLowerCase().includes(searchTerm) ||
-        i.location.toLowerCase().includes(searchTerm) ||
-        i.description.toLowerCase().includes(searchTerm)
-      );
+      const searchRegex = new RegExp(filters.search, 'i');
+      query.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { location: searchRegex },
+      ];
     }
 
-    // Sorting
+    // Determine sort order
+    let sortOption = { createdAt: -1 }; // default: latest
     if (filters.sortBy === 'mostUpvoted') {
-      filteredIssues.sort((a, b) => b.upvoteCount - a.upvoteCount);
+      sortOption = { upvoteCount: -1 };
     } else if (filters.sortBy === 'leastUpvoted') {
-      filteredIssues.sort((a, b) => a.upvoteCount - b.upvoteCount);
+      sortOption = { upvoteCount: 1 };
     } else if (filters.sortBy === 'latest') {
-      filteredIssues.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sortOption = { createdAt: -1 };
     } else if (filters.sortBy === 'oldest') {
-      filteredIssues.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      sortOption = { createdAt: 1 };
     }
 
-    return filteredIssues;
+    const issues = await Issue.find(query).sort(sortOption);
+    return issues.map(issue => issue.toJSON());
   }
 
   // Get issue by ID
-  getIssueById(issueId) {
-    const issue = issues.find(i => i.id === issueId);
+  async getIssueById(issueId) {
+    const issue = await Issue.findById(issueId);
 
     if (!issue) {
       throw { status: 404, message: 'Issue not found' };
     }
 
-    return issue;
+    return issue.toJSON();
   }
 
   // Update issue
-  updateIssue(issueId, updates, userId) {
-    const issue = this.getIssueById(issueId);
+  async updateIssue(issueId, updates, userId) {
+    const issue = await Issue.findById(issueId);
 
-    // Only reporter or admin can update
+    if (!issue) {
+      throw { status: 404, message: 'Issue not found' };
+    }
+
+    // Only reporter can update
     if (issue.reporterId !== userId) {
       throw { status: 403, message: 'Not authorized to update this issue' };
     }
 
-    if (updates.title) issue.title = updates.title;
-    if (updates.description) issue.description = updates.description;
-    if (updates.category) issue.category = updates.category;
-    if (updates.status) issue.status = updates.status;
-    if (updates.location) issue.location = updates.location;
-    if (updates.imageUrl) issue.imageUrl = updates.imageUrl;
+    const allowedUpdates = {};
+    if (updates.title) allowedUpdates.title = updates.title;
+    if (updates.description) allowedUpdates.description = updates.description;
+    if (updates.category) allowedUpdates.category = updates.category;
+    if (updates.status) allowedUpdates.status = updates.status;
+    if (updates.location) allowedUpdates.location = updates.location;
+    if (updates.imageUrl) allowedUpdates.imageUrl = updates.imageUrl;
 
-    issue.updatedAt = new Date().toISOString();
-
-    return issue;
+    const updatedIssue = await Issue.findByIdAndUpdate(issueId, allowedUpdates, { new: true });
+    return updatedIssue.toJSON();
   }
 
   // Delete issue
-  deleteIssue(issueId, userId) {
-    const index = issues.findIndex(i => i.id === issueId);
+  async deleteIssue(issueId, userId) {
+    const issue = await Issue.findById(issueId);
 
-    if (index === -1) {
+    if (!issue) {
       throw { status: 404, message: 'Issue not found' };
     }
 
-    const issue = issues[index];
-
-    // Only reporter or admin can delete
+    // Only reporter can delete
     if (issue.reporterId !== userId) {
       throw { status: 403, message: 'Not authorized to delete this issue' };
     }
 
-    issues.splice(index, 1);
+    await Issue.findByIdAndDelete(issueId);
     return { message: 'Issue deleted successfully' };
   }
 
   // Upvote issue
-  upvoteIssue(issueId, userId) {
-    const issue = this.getIssueById(issueId);
+  async upvoteIssue(issueId, userId) {
+    const issue = await Issue.findById(issueId);
+
+    if (!issue) {
+      throw { status: 404, message: 'Issue not found' };
+    }
 
     // Check if user already upvoted
     if (issue.upvoters.includes(userId)) {
@@ -144,28 +136,36 @@ class IssuesService {
       issue.upvoteCount++;
     }
 
-    return issue;
+    await issue.save();
+    return issue.toJSON();
   }
 
-  // Get trending issues (top 5 most upvoted)
-  getTrendingIssues(limit = 5) {
-    return issues
-      .sort((a, b) => b.upvoteCount - a.upvoteCount)
-      .slice(0, limit);
+  // Get trending issues (top most upvoted)
+  async getTrendingIssues(limit = 5) {
+    const issues = await Issue.find().sort({ upvoteCount: -1 }).limit(limit);
+    return issues.map(issue => issue.toJSON());
   }
 
   // Get issues by user
-  getIssuesByUser(userId) {
-    return issues.filter(i => i.reporterId === userId);
+  async getIssuesByUser(userId) {
+    const issues = await Issue.find({ reporterId: userId });
+    return issues.map(issue => issue.toJSON());
   }
 
   // Get admin dashboard stats
-  getDashboardStats() {
+  async getDashboardStats() {
+    const [totalIssues, openIssues, resolvedIssues, pendingIssues] = await Promise.all([
+      Issue.countDocuments(),
+      Issue.countDocuments({ status: 'open' }),
+      Issue.countDocuments({ status: 'resolved' }),
+      Issue.countDocuments({ status: 'pending' }),
+    ]);
+
     return {
-      totalIssues: issues.length,
-      openIssues: issues.filter(i => i.status === 'open').length,
-      resolvedIssues: issues.filter(i => i.status === 'resolved').length,
-      pendingIssues: issues.filter(i => i.status === 'pending').length,
+      totalIssues,
+      openIssues,
+      resolvedIssues,
+      pendingIssues,
     };
   }
 }

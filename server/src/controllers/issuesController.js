@@ -13,7 +13,7 @@ class IssuesController {
         sortBy: req.query.sortBy || 'latest'
       };
 
-      const issues = issuesService.getAllIssues(filters);
+      const issues = await issuesService.getAllIssues(filters);
       res.json(issues);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -23,7 +23,7 @@ class IssuesController {
   // Get issue by ID
   async getIssueById(req, res) {
     try {
-      const issue = issuesService.getIssueById(req.params.id);
+      const issue = await issuesService.getIssueById(req.params.id);
       res.json(issue);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -39,7 +39,7 @@ class IssuesController {
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
-      const issue = issuesService.createIssue(
+      const issue = await issuesService.createIssue(
         { title, description, category, city, location, imageUrl },
         req.user.id
       );
@@ -53,7 +53,7 @@ class IssuesController {
   // Update issue
   async updateIssue(req, res) {
     try {
-      const issue = issuesService.updateIssue(
+      const issue = await issuesService.updateIssue(
         req.params.id,
         req.body,
         req.user.id
@@ -68,7 +68,7 @@ class IssuesController {
   // Delete issue
   async deleteIssue(req, res) {
     try {
-      const result = issuesService.deleteIssue(req.params.id, req.user.id);
+      const result = await issuesService.deleteIssue(req.params.id, req.user.id);
       res.json(result);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -78,7 +78,7 @@ class IssuesController {
   // Upvote issue
   async upvoteIssue(req, res) {
     try {
-      const issue = issuesService.upvoteIssue(req.params.id, req.user.id);
+      const issue = await issuesService.upvoteIssue(req.params.id, req.user.id);
       res.json(issue);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -89,7 +89,7 @@ class IssuesController {
   async getTrendingIssues(req, res) {
     try {
       const limit = req.query.limit || 5;
-      const issues = issuesService.getTrendingIssues(parseInt(limit));
+      const issues = await issuesService.getTrendingIssues(parseInt(limit));
       res.json(issues);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -99,7 +99,7 @@ class IssuesController {
   // Get issues by user
   async getIssuesByUser(req, res) {
     try {
-      const issues = issuesService.getIssuesByUser(req.params.userId);
+      const issues = await issuesService.getIssuesByUser(req.params.userId);
       res.json(issues);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -109,7 +109,7 @@ class IssuesController {
   // Get dashboard stats
   async getDashboardStats(req, res) {
     try {
-      const stats = issuesService.getDashboardStats();
+      const stats = await issuesService.getDashboardStats();
       res.json(stats);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
