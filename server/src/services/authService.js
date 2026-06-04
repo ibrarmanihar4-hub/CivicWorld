@@ -1,9 +1,7 @@
 // server/src/services/authService.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-// In-memory user storage
-const users = [];
+const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_change_in_production';
 
@@ -13,7 +11,7 @@ class AuthService {
     const { name, email, password, city, profilePictureUrl } = userData;
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw { status: 409, message: 'User already exists' };
     }
@@ -22,32 +20,26 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const newUser = {
-      id: Date.now().toString(),
+    const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
       city,
       profilePictureUrl: profilePictureUrl || 'https://via.placeholder.com/150',
-      createdAt: new Date().toISOString(),
-      totalPosts: 0,
-      totalUpvotes: 0,
-    };
-
-    users.push(newUser);
+    });
 
     // Generate token
-    const token = this.generateToken(newUser.id, newUser.email);
+    const token = this.generateToken(newUser._id.toString(), newUser.email);
 
     return {
       user: this.sanitizeUser(newUser),
-      token
+      token,
     };
   }
 
   // Login user
   async login(email, password) {
-    const user = users.find(u => u.email === email);
+    const user = await User.findOne({ email });
 
     if (!user) {
       throw { status: 401, message: 'Invalid email or password' };
@@ -61,17 +53,17 @@ class AuthService {
     }
 
     // Generate token
-    const token = this.generateToken(user.id, user.email);
+    const token = this.generateToken(user._id.toString(), user.email);
 
     return {
       user: this.sanitizeUser(user),
-      token
+      token,
     };
   }
 
   // Get user profile
-  getUserProfile(userId) {
-    const user = users.find(u => u.id === userId);
+  async getUserProfile(userId) {
+    const user = await User.findById(userId);
 
     if (!user) {
       throw { status: 404, message: 'User not found' };
@@ -100,26 +92,29 @@ class AuthService {
 
   // Sanitize user data (remove password)
   sanitizeUser(user) {
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const userObj = user.toJSON();
+    delete userObj.password;
+    return userObj;
   }
 
   // Get all users (for admin)
-  getAllUsers() {
+  async getAllUsers() {
+    const users = await User.find();
     return users.map(u => this.sanitizeUser(u));
   }
 
   // Update user profile
-  updateUserProfile(userId, updates) {
-    const user = users.find(u => u.id === userId);
+  async updateUserProfile(userId, updates) {
+    const allowedUpdates = {};
+    if (updates.name) allowedUpdates.name = updates.name;
+    if (updates.city) allowedUpdates.city = updates.city;
+    if (updates.profilePictureUrl) allowedUpdates.profilePictureUrl = updates.profilePictureUrl;
+
+    const user = await User.findByIdAndUpdate(userId, allowedUpdates, { new: true });
 
     if (!user) {
       throw { status: 404, message: 'User not found' };
     }
-
-    if (updates.name) user.name = updates.name;
-    if (updates.city) user.city = updates.city;
-    if (updates.profilePictureUrl) user.profilePictureUrl = updates.profilePictureUrl;
 
     return this.sanitizeUser(user);
   }

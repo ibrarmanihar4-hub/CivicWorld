@@ -1,0 +1,7 @@
+{
+  "task_id": "task-mongodb-migration",
+  "task_description": "Convert CivicConnect from in-memory storage to MongoDB using Mongoose. Update the database URI, create proper Mongoose models for User/Issue/Comment, and rewrite all three services to use Mongoose queries instead of in-memory arrays while maintaining the same API response shapes for frontend compatibility.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

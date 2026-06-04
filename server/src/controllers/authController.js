@@ -44,7 +44,7 @@ class AuthController {
   // Get profile
   async getProfile(req, res) {
     try {
-      const user = authService.getUserProfile(req.user.id);
+      const user = await authService.getUserProfile(req.user.id);
       res.json(user);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
@@ -56,7 +56,7 @@ class AuthController {
     try {
       const { name, city, profilePictureUrl } = req.body;
 
-      const updated = authService.updateUserProfile(req.user.id, {
+      const updated = await authService.updateUserProfile(req.user.id, {
         name,
         city,
         profilePictureUrl
@@ -71,7 +71,7 @@ class AuthController {
   // Get all users
   async getAllUsers(req, res) {
     try {
-      const users = authService.getAllUsers();
+      const users = await authService.getAllUsers();
       res.json(users);
     } catch (err) {
       res.status(err.status || 500).json({ error: err.message });
