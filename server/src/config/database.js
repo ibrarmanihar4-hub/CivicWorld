@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://ibrarmanihar02_db_user:bymyb57CfRyzJrYp@cluster0.dbqpxjd.mongodb.net/?appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
 
 const connectDB = async () => {
+  if (!MONGO_URI) {
+    console.error('❌ MONGO_URI is not set. Define it in server/.env');
+    process.exit(1);
+  }
+
   try {
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,

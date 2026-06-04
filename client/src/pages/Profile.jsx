@@ -41,7 +41,7 @@ export default function Profile() {
   return (
     <div className="container" style={{ padding: '2rem 0', maxWidth: '900px' }}>
       <div className="card" style={{ marginBottom: '2rem', padding: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+        <div className="row-wrap" style={{ marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
             <div style={{
               width: '100px',
@@ -75,7 +75,7 @@ export default function Profile() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '2rem' }}>
+        <div className="grid-3col" style={{ marginTop: '2rem' }}>
           <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: 'var(--gray-50)', borderRadius: '8px' }}>
             <p style={{ margin: '0', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>{userIssues.length}</p>
             <p style={{ margin: '0.5rem 0 0 0', color: 'var(--gray-600)' }}>Posts</p>

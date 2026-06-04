@@ -1,11 +1,11 @@
 /* index.css */
 :root {
-  --color-primary: hsl(210, 70%, 55%);
-  --color-primary-dark: hsl(210, 70%, 45%);
-  --color-bg: hsl(0, 0%, 98%);
-  --color-bg-dark: hsl(0, 0%, 12%);
-  --color-text: hsl(210, 15%, 20%);
-  --color-muted: hsl(210, 10%, 60%);
+  --color-primary: hsl(0, 0%, 0%);
+  --color-primary-dark: hsl(0, 0%, 0%);
+  --color-bg: hsl(0, 0%, 100%);
+  --color-bg-dark: hsl(0, 0%, 4%);
+  --color-text: hsl(0, 0%, 7%);
+  --color-muted: hsl(0, 0%, 53%);
   --font-family: 'Inter', sans-serif;
 }
 

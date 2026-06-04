@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import heroGif from '../assets/Demopolisframe1.gif';
 import './Header.css';
 
 export default function Header() {
   return (
     <header className="hero-header">
       <img 
-        src="https://project-orion-production.s3.amazonaws.com/uploads/content/21900/Demopolisframe1.gif" 
+        src={heroGif} 
         alt="City background" 
         className="background-gif"
       />

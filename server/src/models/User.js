@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     city: { type: String, required: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
     profilePictureUrl: { type: String, default: 'https://via.placeholder.com/150' },
     totalPosts: { type: Number, default: 0 },
     totalUpvotes: { type: Number, default: 0 },

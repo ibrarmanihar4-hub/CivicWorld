@@ -210,7 +210,12 @@
 
 .upvote-btn.active {
   color: var(--primary);
-  background-color: #ede9fe;
+  background-color: var(--gray-100);
+}
+
+.upvote-emoji {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .action-btn:disabled {

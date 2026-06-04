@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { issuesService, commentsService } from '../services/auth';
 import { useAuth } from '../context/AuthContext';
-import { FiThumbsUp, FiMessageCircle, FiTrash2 } from 'react-icons/fi';
+import { FiMessageCircle, FiTrash2 } from 'react-icons/fi';
 import { formatDate, getCategoryColor } from '../utils/helpers';
 
 export default function IssueDetails() {
@@ -111,7 +111,7 @@ export default function IssueDetails() {
 
         <div style={{ display: 'flex', gap: '1rem', borderTop: '1px solid var(--gray-200)', paddingTop: '1.5rem' }}>
           <button onClick={handleUpvote} className="btn" style={{ backgroundColor: 'transparent', borderLeft: '3px solid var(--primary)' }}>
-            <FiThumbsUp /> {issue.upvoteCount || 0} Upvotes
+            <span role="img" aria-label="upvote" style={{ marginRight: '0.4rem' }}>⬆️</span> {issue.upvoteCount || 0} Upvotes
           </button>
           <div className="btn" style={{ backgroundColor: 'transparent', borderLeft: '3px solid var(--gray-300)' }}>
             <FiMessageCircle /> {comments.length} Comments

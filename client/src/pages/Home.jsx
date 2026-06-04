@@ -39,17 +39,10 @@ export default function Home() {
     }
   };
 
-  const handleUpvote = (issueId) => {
-    setIssues(issues.map(issue => {
-      if (issue.id === issueId) {
-        return {
-          ...issue,
-          upvoted: !issue.upvoted,
-          upvoteCount: issue.upvoted ? issue.upvoteCount - 1 : issue.upvoteCount + 1
-        };
-      }
-      return issue;
-    }));
+  const handleUpvote = (updatedIssue) => {
+    setIssues(issues.map(issue =>
+      issue.id === updatedIssue.id ? { ...issue, ...updatedIssue } : issue
+    ));
   };
 
   const handleDelete = (issueId) => {

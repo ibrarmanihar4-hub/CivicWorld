@@ -23,7 +23,7 @@ export default function Contact() {
     <div className="container" style={{ padding: '2rem 0', maxWidth: '900px' }}>
       <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>Get in Touch</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+      <div className="grid-2col" style={{ marginBottom: '2rem' }}>
         <div className="card">
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <FiMail /> Email

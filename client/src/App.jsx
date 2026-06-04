@@ -16,11 +16,13 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 
 // Protected Route Component
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+function ProtectedRoute({ children, adminOnly = false }) {
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) return <div className="container" style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>;
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (adminOnly && user?.role !== 'admin') return <Navigate to="/" />;
+  return children;
 }
 
 function AppRoutes() {
@@ -67,7 +69,7 @@ function AppRoutes() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute adminOnly>
                 <AdminDashboard />
               </ProtectedRoute>
             }

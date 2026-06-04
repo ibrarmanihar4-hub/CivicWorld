@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiMenu, FiX, FiLogOut, FiUser } from 'react-icons/fi';
+import brandIcon from '../assets/istockphoto-517163466-612x612.jpg';
 import './NavBar.css';
 
 export default function NavBar() {
@@ -18,7 +19,7 @@ export default function NavBar() {
     <nav className="navbar">
       <div className="navbar-container container">
         <Link to="/" className="navbar-brand">
-          <span className="brand-icon">🏛️</span>
+          <img src={brandIcon} alt="CivicConnect logo" className="brand-icon" />
           <span className="brand-text">CivicConnect</span>
         </Link>
 
@@ -27,19 +28,19 @@ export default function NavBar() {
         </button>
 
         <div className={`navbar-menu ${isOpen ? 'active' : ''}`}>
-          <Link to="/" className="navbar-link">Home</Link>
-          <Link to="/issues" className="navbar-link">Issues</Link>
-          <Link to="/about" className="navbar-link">About</Link>
-          <Link to="/contact" className="navbar-link">Contact</Link>
+          <NavLink to="/" end className="navbar-link">Home</NavLink>
+          <NavLink to="/issues" className="navbar-link">Issues</NavLink>
+          <NavLink to="/about" className="navbar-link">About</NavLink>
+          <NavLink to="/contact" className="navbar-link">Contact</NavLink>
 
           <div className="navbar-divider"></div>
 
           {isAuthenticated ? (
             <div className="navbar-auth">
-              <Link to={`/profile/${user?.id}`} className="navbar-link navbar-user">
+              <NavLink to={`/profile/${user?.id}`} className="navbar-link navbar-user">
                 <FiUser size={18} />
                 {user?.name}
-              </Link>
+              </NavLink>
               <Link to="/create-issue" className="btn btn-primary">
                 + Report Issue
               </Link>
@@ -47,7 +48,9 @@ export default function NavBar() {
                 <FiLogOut size={18} />
                 Logout
               </button>
-              <Link to="/admin" className="navbar-link">Admin</Link>
+              {user?.role === 'admin' && (
+                <NavLink to="/admin" className="navbar-link">Admin</NavLink>
+              )}
             </div>
           ) : (
             <div className="navbar-auth">

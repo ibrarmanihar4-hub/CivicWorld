@@ -1,21 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiThumbsUp, FiMessageCircle, FiTrash2, FiEdit } from 'react-icons/fi';
+import { FiMessageCircle, FiTrash2, FiEdit } from 'react-icons/fi';
 import { formatDate, truncateText, getCategoryColor } from '../utils/helpers';
 import { issuesService } from '../services/auth';
 import './IssueCard.css';
 
 export default function IssueCard({ issue, onUpvote, onDelete, currentUserId }) {
   const [isUpvoting, setIsUpvoting] = useState(false);
+  const [upvoteCount, setUpvoteCount] = useState(issue.upvoteCount || 0);
+  const [upvoters, setUpvoters] = useState(issue.upvoters || []);
   const isUserIssue = currentUserId === issue.reporterId;
-  const isUpvoted = issue.upvoters?.includes(currentUserId);
+  const isUpvoted = upvoters.includes(currentUserId);
+
+  // Keep local state in sync when the issue prop changes (re-fetch, filtering, sorting)
+  useEffect(() => {
+    setUpvoteCount(issue.upvoteCount || 0);
+    setUpvoters(issue.upvoters || []);
+  }, [issue.upvoteCount, issue.upvoters]);
 
   const handleUpvote = async () => {
-    if (!currentUserId) return;
+    if (!currentUserId || isUpvoting) return;
     setIsUpvoting(true);
     try {
-      await issuesService.upvoteIssue(issue.id);
-      onUpvote?.(issue.id);
+      const res = await issuesService.upvoteIssue(issue.id);
+      const updated = res.data;
+      // Always trust the server's authoritative values
+      setUpvoteCount(updated.upvoteCount ?? 0);
+      setUpvoters(updated.upvoters ?? []);
+      onUpvote?.(updated);
     } catch (err) {
       console.error('Failed to upvote:', err);
     } finally {
@@ -100,9 +112,10 @@ export default function IssueCard({ issue, onUpvote, onDelete, currentUserId }) 
           onClick={handleUpvote}
           disabled={isUpvoting || !currentUserId}
           className={`action-btn upvote-btn ${isUpvoted ? 'active' : ''}`}
+          title={isUpvoted ? 'Remove upvote' : 'Upvote'}
         >
-          <FiThumbsUp size={18} />
-          <span>{issue.upvoteCount || 0}</span>
+          <span className="upvote-emoji" role="img" aria-label="upvote">⬆️</span>
+          <span>{upvoteCount}</span>
         </button>
 
         <Link to={`/issues/${issue.id}`} className="action-btn">
