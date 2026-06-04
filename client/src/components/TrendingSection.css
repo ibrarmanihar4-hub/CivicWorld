@@ -1,0 +1,132 @@
+/* TrendingSection.css */
+
+.trending-section {
+  position: sticky;
+  top: 100px;
+}
+
+.trending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--primary);
+}
+
+.trending-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary);
+}
+
+.view-all-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-base);
+}
+
+.view-all-link:hover {
+  gap: var(--spacing-sm);
+  color: var(--primary-dark);
+}
+
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.trending-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background-color: var(--gray-50);
+  transition: all var(--transition-base);
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid transparent;
+}
+
+.trending-item:hover {
+  background-color: var(--gray-100);
+  border-color: var(--primary);
+}
+
+.trending-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  color: var(--white);
+  border-radius: 50%;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.trending-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.trending-item-title {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-900);
+  white-space: normal;
+  word-break: break-word;
+  transition: color var(--transition-base);
+}
+
+.trending-item:hover .trending-item-title {
+  color: var(--primary);
+}
+
+.trending-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category-pill {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-full);
+  color: var(--white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.upvote-count {
+  font-size: var(--font-size-xs);
+  color: var(--gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.no-trending {
+  text-align: center;
+  color: var(--gray-500);
+  padding: var(--spacing-lg);
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .trending-section {
+    position: static;
+  }
+}

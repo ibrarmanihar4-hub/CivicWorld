@@ -1,0 +1,68 @@
+/* Home.css */
+
+.home-page {
+  min-height: calc(100vh - 200px);
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-2xl);
+}
+
+.feed-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+.issues-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+.loading-message,
+.no-issues {
+  text-align: center;
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  background-color: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.no-issues {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.no-issues p {
+  font-size: var(--font-size-lg);
+  color: var(--gray-600);
+  margin: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-grid {
+    gap: var(--spacing-lg);
+  }
+}

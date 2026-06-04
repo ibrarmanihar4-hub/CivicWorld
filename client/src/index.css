@@ -1,0 +1,45 @@
+/* index.css */
+:root {
+  --color-primary: hsl(210, 70%, 55%);
+  --color-primary-dark: hsl(210, 70%, 45%);
+  --color-bg: hsl(0, 0%, 98%);
+  --color-bg-dark: hsl(0, 0%, 12%);
+  --color-text: hsl(210, 15%, 20%);
+  --color-muted: hsl(210, 10%, 60%);
+  --font-family: 'Inter', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: var(--color-bg-dark);
+    --color-text: hsl(210, 10%, 90%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
